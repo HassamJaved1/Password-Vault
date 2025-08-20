@@ -1,0 +1,38 @@
+﻿@model Password_Vault.Models.RegisterViewModel
+@{
+    ViewData["Title"] = "Sign Up";
+}
+
+<div class="columns is-centered">
+    <div class="column is-6">
+        <div class="box">
+            <h1 class="title has-text-centered">📝 Create Account</h1>
+            <form asp-action="Register" method="post">
+                <div class="field">
+                    <label class="label">User ID (ACE-123)</label>
+                    <input asp-for="UserId" class="input" placeholder="ACE-703" />
+                    <p class="help is-danger" asp-validation-for="UserId"></p>
+                </div>
+
+                <div class="field">
+                    <label class="label">Password</label>
+                    <input asp-for="Password" type="password" class="input" placeholder="********" />
+                    <p class="help is-danger" asp-validation-for="Password"></p>
+                </div>
+
+                <div class="field">
+                    <label class="label">Confirm Password</label>
+                    <input asp-for="ConfirmPassword" type="password" class="input" placeholder="********" />
+                    <p class="help is-danger" asp-validation-for="ConfirmPassword"></p>
+                </div>
+
+                <div class="field">
+                    <button type="submit" class="button is-success is-fullwidth">Sign Up</button>
+                </div>
+            </form>
+            <p class="has-text-centered mt-3">
+                <a asp-action="Login">Back to Login</a>
+            </p>
+        </div>
+    </div>
+</div>

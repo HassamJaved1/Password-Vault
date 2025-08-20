@@ -1,0 +1,43 @@
+﻿@model Password_Vault.Models.LoginViewModel
+@{
+    ViewData["Title"] = "Login";
+}
+
+
+<div class="columns is-centered">
+    <div class="column is-5">
+        <div class="box">
+            <h1 class="title has-text-centered">🔐 Login</h1>
+            <form asp-action="Login" method="post">
+                <div class="field">
+                    <label class="label">Username (admin) or User ID (ACE-123)</label>
+                    <div class="control has-icons-left">
+                        <input asp-for="UsernameOrUserId" class="input" placeholder="e.g. admin-user or ACE-703" />
+                        <span class="icon is-small is-left"><i class="fas fa-user"></i></span>
+                    </div>
+                    <p class="help is-danger" asp-validation-for="UsernameOrUserId"></p>
+                </div>
+
+                <div class="field">
+                    <label class="label">Password</label>
+                    <div class="control has-icons-left">
+                        <input asp-for="Password" type="password" class="input" placeholder="********" />
+                        <span class="icon is-small is-left"><i class="fas fa-lock"></i></span>
+                    </div>
+                    <p class="help is-danger" asp-validation-for="Password"></p>
+                </div>
+
+                <div class="field">
+                    <button type="submit" class="button is-primary is-fullwidth">Login</button>
+                </div>
+            </form>
+            <p class="has-text-centered mt-3">
+                <a asp-action="Register">Don't have an account? Sign Up</a>
+            </p>
+            @if (TempData["msg"] != null)
+            {
+                <div class="notification is-success mt-3">@TempData["msg"]</div>
+            }
+        </div>
+    </div>
+</div>

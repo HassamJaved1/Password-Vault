@@ -1,0 +1,17 @@
+﻿@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<div class="columns is-centered">
+    <div class="column is-8">
+        <div class="notification is-info has-text-centered">
+            <h2 class="title is-4">
+                Welcome @User.Identity?.Name 🎉
+            </h2>
+            <p>
+                You are logged in as
+                <strong>@(User.IsInRole("admin") ? "Admin" : "User")</strong>.
+            </p>
+        </div>
+    </div>
+</div>

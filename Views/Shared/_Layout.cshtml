@@ -1,0 +1,53 @@
+﻿<!DOCTYPE html>
+<html data-theme="light">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ViewData["Title"] - PasswordVault</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.0/css/bulma.min.css">
+</head>
+<body>
+    <nav class="navbar is-primary" role="navigation">
+        <div class="navbar-brand">
+            <a class="navbar-item" href="/">
+                <strong>PasswordVault</strong>
+            </a>
+        </div>
+
+        <div class="navbar-menu">
+            <div class="navbar-start">
+                @if (User.Identity?.IsAuthenticated == true)
+                {
+                    if (User.IsInRole("admin"))
+                    {
+                        <a class="navbar-item" href="/">Admin Portal</a>
+                    }
+                    else
+                    {
+                        <a class="navbar-item" href="/">User Portal</a>
+                    }
+                }
+            </div>
+
+            <div class="navbar-end">
+                @if (User.Identity?.IsAuthenticated == true)
+                {
+                    <div class="navbar-item">
+                        <form asp-controller="Account" asp-action="Logout" method="post">
+                            <button type="submit" class="button is-light">Logout</button>
+                        </form>
+                    </div>
+                }
+            </div>
+        </div>
+    </nav>
+
+    <section class="section">
+        <div class="container">
+            @RenderBody()
+        </div>
+    </section>
+
+    @RenderSection("Scripts", required: false)
+</body>
+</html>
