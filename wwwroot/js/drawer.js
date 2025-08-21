@@ -98,6 +98,21 @@ function showTabContent(tabId) {
             mainContent.style.opacity = '1';
             mainContent.style.transform = 'translateY(0)';
         }, 10);
+        
+        // Initialize tab-specific functionality
+        initializeTabFunctionality(tabId);
+    }
+}
+
+// Function to initialize tab-specific functionality
+function initializeTabFunctionality(tabId) {
+    switch(tabId) {
+        case 'grant-access':
+            initializeWhitelistForm();
+            break;
+        case 'user-management':
+            loadWhitelistedUsers();
+            break;
     }
 }
 
@@ -161,44 +176,102 @@ function getTabContent(tabId) {
         `,
         'grant-access': `
             <div class="columns is-centered">
-                <div class="column is-10">
-                    <div class="notification is-warning">
+                <div class="column is-8">
+                    <div class="notification is-primary is-light">
                         <h2 class="title is-4">
-                            <span class="icon has-text-white">
-                                <i class="fas fa-key"></i>
+                            <span class="icon has-text-primary">
+                                <i class="fas fa-user-plus"></i>
                             </span>
-                            Grant Usage Access
+                            Grant User Access
                         </h2>
-                        <p>Manage user permissions and access to the system</p>
+                        <p>Whitelist new users to grant them access to the Password Vault system</p>
                     </div>
                     
                     <div class="card">
                         <div class="card-header">
-                            <p class="card-header-title">User Access Management</p>
+                            <p class="card-header-title">Whitelist New User</p>
                         </div>
                         <div class="card-content">
-                            <div class="field">
-                                <label class="label">User ID</label>
-                                <div class="control">
-                                    <input class="input" type="text" placeholder="Enter User ID (e.g., ACE-XXX)">
+                            <form id="whitelistForm">
+                                <div class="field">
+                                    <label class="label">User ID (ACE-XXXX)</label>
+                                    <div class="control has-icons-left">
+                                        <input class="input" type="text" id="userId" placeholder="Enter ACE ID (e.g., ACE-1234)" 
+                                               pattern="^ACE-\\d{4}$" required>
+                                        <span class="icon is-small is-left">
+                                            <i class="fas fa-id-card"></i>
+                                        </span>
+                                    </div>
+                                    <p class="help">Format: ACE-XXXX (e.g., ACE-1234)</p>
                                 </div>
-                            </div>
-                            <div class="field">
-                                <label class="label">Access Level</label>
-                                <div class="control">
-                                    <div class="select">
-                                        <select>
-                                            <option>Full Access</option>
-                                            <option>Read Only</option>
-                                            <option>Limited Access</option>
-                                        </select>
+                                
+                                <div class="field">
+                                    <div class="control">
+                                        <label class="checkbox">
+                                            <input type="checkbox" id="confirmWhitelist" required>
+                                            I confirm that I want to whitelist this user and grant them access to the Password Vault system.
+                                        </label>
                                     </div>
                                 </div>
+                                
+                                <div class="field is-grouped">
+                                    <div class="control">
+                                        <button type="submit" class="button is-primary" id="whitelistBtn">
+                                            <span class="icon">
+                                                <i class="fas fa-check"></i>
+                                            </span>
+                                            <span>Whitelist User</span>
+                                        </button>
+                                    </div>
+                                    <div class="control">
+                                        <button type="button" class="button is-light" onclick="showTab('view-logs')">
+                                            Cancel
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    
+                    <div id="whitelistResult" class="notification" style="display: none;">
+                        <button class="delete" onclick="hideNotification()"></button>
+                        <span id="resultMessage"></span>
+                    </div>
+                </div>
+            </div>
+        `,
+        'user-management': `
+            <div class="columns is-centered">
+                <div class="column is-12">
+                    <div class="notification is-info is-light">
+                        <h2 class="title is-4">
+                            <span class="icon has-text-info">
+                                <i class="fas fa-users-cog"></i>
+                            </span>
+                            User Management
+                        </h2>
+                        <p>View and manage all whitelisted users in the system</p>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-header">
+                            <p class="card-header-title">Whitelisted Users</p>
+                            <div class="card-header-icon">
+                                <button class="button is-small is-primary" onclick="showTab('grant-access')">
+                                    <span class="icon">
+                                        <i class="fas fa-plus"></i>
+                                    </span>
+                                    <span>Add New User</span>
+                                </button>
                             </div>
-                            <div class="field">
-                                <div class="control">
-                                    <button class="button is-success">Grant Access</button>
-                                    <button class="button is-danger">Revoke Access</button>
+                        </div>
+                        <div class="card-content">
+                            <div id="usersTableContainer">
+                                <div class="has-text-centered py-6">
+                                    <span class="icon is-large">
+                                        <i class="fas fa-spinner fa-spin fa-2x"></i>
+                                    </span>
+                                    <p class="mt-3">Loading users...</p>
                                 </div>
                             </div>
                         </div>
@@ -208,7 +281,7 @@ function getTabContent(tabId) {
         `,
         'reset-password': `
             <div class="columns is-centered">
-                <div class="column is-10">
+                <div class="column is-8">
                     <div class="notification is-info">
                         <h2 class="title is-4">
                             <span class="icon has-text-white">
@@ -375,4 +448,131 @@ function getTabContent(tabId) {
     };
     
     return contentMap[tabId] || '';
+}
+
+// Whitelist functionality
+function initializeWhitelistForm() {
+    const form = document.getElementById('whitelistForm');
+    if (form) {
+        form.addEventListener('submit', handleWhitelistSubmit);
+    }
+}
+
+function handleWhitelistSubmit(event) {
+    event.preventDefault();
+    
+    const userId = document.getElementById('userId').value;
+    const confirmWhitelist = document.getElementById('confirmWhitelist').checked;
+    
+    if (!userId || !confirmWhitelist) {
+        showNotification('Please fill in all required fields.', 'is-danger');
+        return;
+    }
+    
+    if (!userId.match(/^ACE-\d{4}$/)) {
+        showNotification('User ID must be in format ACE-XXXX (e.g., ACE-1234).', 'is-danger');
+        return;
+    }
+    
+    // Disable submit button
+    const submitBtn = document.getElementById('whitelistBtn');
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<span class="icon"><i class="fas fa-spinner fa-spin"></i></span><span>Processing...</span>';
+    
+    // Submit to backend
+    fetch('/Admin/WhitelistUser', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            UserId: userId,
+            ConfirmWhitelist: confirmWhitelist
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showNotification(`User ${userId} has been successfully whitelisted!`, 'is-success');
+            document.getElementById('whitelistForm').reset();
+        } else {
+            showNotification(data.message || 'Failed to whitelist user. Please try again.', 'is-danger');
+        }
+    })
+    .catch(error => {
+        showNotification('An error occurred while processing your request.', 'is-danger');
+        console.error('Error:', error);
+    })
+    .finally(() => {
+        // Re-enable submit button
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = '<span class="icon"><i class="fas fa-check"></i></span><span>Whitelist User</span>';
+    });
+}
+
+function showNotification(message, type) {
+    const notification = document.getElementById('whitelistResult');
+    const messageSpan = document.getElementById('resultMessage');
+    
+    notification.className = `notification ${type}`;
+    messageSpan.textContent = message;
+    notification.style.display = 'block';
+    
+    // Auto-hide after 5 seconds
+    setTimeout(() => {
+        hideNotification();
+    }, 5000);
+}
+
+function hideNotification() {
+    document.getElementById('whitelistResult').style.display = 'none';
+}
+
+// User management functionality
+function loadWhitelistedUsers() {
+    const container = document.getElementById('usersTableContainer');
+    
+    fetch('/Admin/WhitelistedUsers')
+        .then(response => response.text())
+        .then(html => {
+            container.innerHTML = html;
+        })
+        .catch(error => {
+            container.innerHTML = `
+                <div class="has-text-centered py-6">
+                    <span class="icon is-large has-text-danger">
+                        <i class="fas fa-exclamation-triangle fa-2x"></i>
+                    </span>
+                    <p class="mt-3 has-text-danger">Failed to load users. Please try again.</p>
+                </div>
+            `;
+            console.error('Error:', error);
+        });
+}
+
+function revokeUserAccess(userId) {
+    if (!confirm(`Are you sure you want to revoke access for user ${userId}? This action cannot be undone.`)) {
+        return;
+    }
+    
+    fetch('/Admin/RevokeAccess', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ userId: userId })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showNotification(`Access revoked for user ${userId}.`, 'is-success');
+            loadWhitelistedUsers(); // Reload the table
+        } else {
+            showNotification(data.message || 'Failed to revoke access.', 'is-danger');
+        }
+    })
+    .catch(error => {
+        showNotification('An error occurred while revoking access.', 'is-danger');
+        console.error('Error:', error);
+    });
 }

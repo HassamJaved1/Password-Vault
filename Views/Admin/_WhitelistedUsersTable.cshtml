@@ -1,0 +1,99 @@
+@model IEnumerable<Password_Vault.Models.WhitelistedUser>
+
+@if (!Model.Any())
+{
+    <div class="has-text-centered py-6">
+        <span class="icon is-large has-text-grey">
+            <i class="fas fa-users fa-2x"></i>
+        </span>
+        <p class="mt-3 has-text-grey">No whitelisted users found.</p>
+        <button class="button is-primary mt-3" onclick="showTab('grant-access')">
+            <span class="icon">
+                <i class="fas fa-plus"></i>
+            </span>
+            <span>Add First User</span>
+        </button>
+    </div>
+}
+else
+{
+    <div class="table-container">
+        <table class="table is-fullwidth is-striped is-hoverable">
+            <thead>
+                <tr>
+                    <th>User ID</th>
+                    <th>Admin ID</th>
+                    <th>Created At</th>
+                    <th>Updated At</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var user in Model)
+                {
+                    <tr>
+                        <td>
+                            <span class="has-text-weight-semibold">@user.User_Id</span>
+                        </td>
+                        <td>
+                            <span class="tag is-info is-light">@user.Admin_Id</span>
+                        </td>
+                        <td>
+                            <span class="has-text-grey">@user.Created_At.ToString("MMM dd, yyyy HH:mm")</span>
+                        </td>
+                        <td>
+                            <span class="has-text-grey">@user.Updated_At.ToString("MMM dd, yyyy HH:mm")</span>
+                        </td>
+                        <td>
+                            @if (user.Access_Revoked)
+                            {
+                                <span class="tag is-danger is-light">
+                                    <span class="icon is-small">
+                                        <i class="fas fa-ban"></i>
+                                    </span>
+                                    <span>Revoked</span>
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="tag is-success is-light">
+                                    <span class="icon is-small">
+                                        <i class="fas fa-check"></i>
+                                    </span>
+                                    <span>Active</span>
+                                </span>
+                            }
+                        </td>
+                        <td>
+                            @if (!user.Access_Revoked)
+                            {
+                                <button class="button is-small is-warning is-light" 
+                                        onclick="revokeUserAccess('@user.User_Id')"
+                                        title="Revoke access for this user">
+                                    <span class="icon is-small">
+                                        <i class="fas fa-user-times"></i>
+                                    </span>
+                                    <span>Revoke</span>
+                                </button>
+                            }
+                            else
+                            {
+                                <span class="has-text-grey is-size-7">No actions available</span>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    
+    <div class="mt-4 has-text-centered">
+        <div class="notification is-info is-light">
+            <span class="icon">
+                <i class="fas fa-info-circle"></i>
+            </span>
+            <span>Total whitelisted users: <strong>@Model.Count()</strong></span>
+        </div>
+    </div>
+}
