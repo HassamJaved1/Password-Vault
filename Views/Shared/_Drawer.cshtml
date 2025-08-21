@@ -1,0 +1,69 @@
+@if (User.Identity?.IsAuthenticated == true)
+{
+    <div class="drawer-container">
+        <!-- Drawer Toggle Button -->
+        <button class="drawer-toggle button is-primary is-rounded" onclick="toggleDrawer()">
+            <span class="icon">
+                <i class="fas fa-bars"></i>
+            </span>
+        </button>
+
+        <!-- Drawer Overlay -->
+        <div class="drawer-overlay" onclick="closeDrawer()"></div>
+
+        <!-- Drawer Sidebar -->
+        <div class="drawer-sidebar">
+            <div class="drawer-header">
+                <h3 class="title is-4">Menu</h3>
+                <button class="delete" onclick="closeDrawer()"></button>
+            </div>
+
+            <div class="drawer-content">
+                @if (User.IsInRole("admin"))
+                {
+                    <!-- Admin Tabs -->
+                    <div class="vertical-tabs">
+                        <div class="tab-item is-active" onclick="showTab('view-logs', event)">
+                            <span class="icon"><i class="fas fa-list-alt"></i></span>
+                            <span>View Application Logs</span>
+                        </div>
+                        <div class="tab-item" onclick="showTab('grant-access', event)">
+                            <span class="icon"><i class="fas fa-key"></i></span>
+                            <span>Grant Usage Access</span>
+                        </div>
+                        <div class="tab-item" onclick="showTab('reset-password', event)">
+                            <span class="icon"><i class="fas fa-lock"></i></span>
+                            <span>Reset Password</span>
+                        </div>
+                        <div class="tab-item" onclick="showTab('my-passwords', event)">
+                            <span class="icon"><i class="fas fa-shield-alt"></i></span>
+                            <span>My Passwords</span>
+                        </div>
+                        <div class="tab-item" onclick="showTab('shared-passwords', event)">
+                            <span class="icon"><i class="fas fa-share-alt"></i></span>
+                            <span>Shared Passwords</span>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <!-- User Tabs -->
+                    <div class="vertical-tabs">
+                        <div class="tab-item is-active" onclick="showTab('my-passwords', event)">
+                            <span class="icon"><i class="fas fa-shield-alt"></i></span>
+                            <span>My Passwords</span>
+                        </div>
+                        <div class="tab-item" onclick="showTab('shared-passwords', event)">
+                            <span class="icon"><i class="fas fa-share-alt"></i></span>
+                            <span>Shared Passwords</span>
+                        </div>
+                        <div class="tab-item" onclick="showTab('reset-password', event)">
+                            <span class="icon"><i class="fas fa-lock"></i></span>
+                            <span>Reset Password</span>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+}

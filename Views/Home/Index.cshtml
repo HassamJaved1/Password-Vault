@@ -12,6 +12,140 @@
                 You are logged in as
                 <strong>@(User.IsInRole("admin") ? "Admin" : "User")</strong>.
             </p>
+            <p class="mt-3">
+                <button class="button is-primary" onclick="toggleDrawer()">
+                    <span class="icon">
+                        <i class="fas fa-bars"></i>
+                    </span>
+                    <span>Open Menu</span>
+                </button>
+            </p>
+        </div>
+        
+        <!-- Main Content Area for Tab Content -->
+        <div class="main-content mt-5">
+            @if (User.IsInRole("admin"))
+            {
+                <!-- Default Admin Content -->
+                <div class="columns is-centered">
+                    <div class="column is-10">
+                        <div class="notification is-info">
+                            <h2 class="title is-4">
+                                <span class="icon has-text-white">
+                                    <i class="fas fa-list-alt"></i>
+                                </span>
+                                Application Logs
+                            </h2>
+                            <p>Monitor system activities and user actions</p>
+                        </div>
+                        
+                        <div class="card">
+                            <div class="card-header">
+                                <p class="card-header-title">Recent System Logs</p>
+                            </div>
+                            <div class="card-content">
+                                <div class="content">
+                                    <table class="table is-fullwidth">
+                                        <thead>
+                                            <tr>
+                                                <th>Timestamp</th>
+                                                <th>User</th>
+                                                <th>Action</th>
+                                                <th>Details</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>2024-01-15 10:30:00</td>
+                                                <td>admin</td>
+                                                <td>User Login</td>
+                                                <td>Successful login from 192.168.1.100</td>
+                                            </tr>
+                                            <tr>
+                                                <td>2024-01-15 10:25:00</td>
+                                                <td>ACE-001</td>
+                                                <td>Password Reset</td>
+                                                <td>Password changed successfully</td>
+                                            </tr>
+                                            <tr>
+                                                <td>2024-01-15 10:20:00</td>
+                                                <td>admin</td>
+                                                <td>Access Granted</td>
+                                                <td>User ACE-002 granted system access</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <!-- Default User Content -->
+                <div class="columns is-centered">
+                    <div class="column is-10">
+                        <div class="notification is-success">
+                            <h2 class="title is-4">
+                                <span class="icon has-text-white">
+                                    <i class="fas fa-shield-alt"></i>
+                                </span>
+                                My Passwords
+                            </h2>
+                            <p>Manage your personal passwords and credentials securely</p>
+                        </div>
+                        
+                        <div class="card">
+                            <div class="card-header">
+                                <p class="card-header-title">My Password Vault</p>
+                                <div class="card-header-icon">
+                                    <button class="button is-small is-primary">
+                                        <span class="icon">
+                                            <i class="fas fa-plus"></i>
+                                        </span>
+                                        <span>Add New</span>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="card-content">
+                                <div class="content">
+                                    <table class="table is-fullwidth">
+                                        <thead>
+                                            <tr>
+                                                <th>Website/Service</th>
+                                                <th>Username</th>
+                                                <th>Password</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>Gmail</td>
+                                                <td>user@example.com</td>
+                                                <td>••••••••</td>
+                                                <td>
+                                                    <button class="button is-small is-info">View</button>
+                                                    <button class="button is-small is-warning">Edit</button>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>GitHub</td>
+                                                <td>username</td>
+                                                <td>••••••••</td>
+                                                <td>
+                                                    <button class="button is-small is-info">View</button>
+                                                    <button class="button is-small is-warning">Edit</button>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
         </div>
     </div>
 </div>

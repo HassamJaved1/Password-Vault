@@ -28,8 +28,6 @@ builder.Services.AddAuthentication("Cookies")
 
 var app = builder.Build();
 
-await EnsureAdminSeed(app.Services, app.Configuration);
-
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
@@ -45,21 +43,3 @@ app.MapControllerRoute(
 
 app.Run();
 
-static async Task EnsureAdminSeed(IServiceProvider services, IConfiguration cfg)
-{
-    using var scope = services.CreateScope();
-    var db = scope.ServiceProvider.GetRequiredService<IDbConnection>();
-    var username = cfg["AdminSeed:Username"]!;
-    var password = cfg["AdminSeed:Password"]!;
-
-    var exists = await db.ExecuteScalarAsync<int>(
-        "SELECT COUNT(*) FROM admins WHERE username = @u", new { u = username });
-
-    if (exists == 0)
-    {
-        var hash = BCrypt.Net.BCrypt.HashPassword(password);
-        await db.ExecuteAsync(
-            "INSERT INTO admins (username, password_hash) VALUES (@u, @p)",
-            new { u = username, p = hash });
-    }
-}
